@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: ns-ridpharm-webapp
+  labels:
+    app: app-ridpharm
+    environment: production
+    tier: frontend
+    release: stable
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-ridpharm
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: app-ridpharm
+        environment: production
+        tier: frontend
+        release: stable
+    spec:
+      containers:
+      - name: nginx
+        image: janrik/nginx:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-conf
+          mountPath: /etc/nginx/conf.d
+        - name: html-files
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-config
+      - name: html-files
+        configMap:
+          name: html-files

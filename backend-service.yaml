@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: ns-ridpharm-webapp
+  labels:
+    app: app-ridpharm
+    environment: production
+    tier: backend
+    release: stable
+spec:
+  selector:
+    app: app-ridpharm
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000

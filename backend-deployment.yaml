@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: ns-ridpharm-webapp
+  labels:
+    app: app-ridpharm
+    environment: production
+    tier: backend
+    release: stable
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-ridpharm
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: app-ridpharm
+        environment: production
+        tier: backend
+        release: stable
+    spec:
+      dnsPolicy: ClusterFirst
+      containers:
+      - name: backend
+        image: janrik/backend:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+          - name: MYSQL_HOST
+            value: db-service
+          - name: MYSQL_USER
+            value: user
+          - name: MYSQL_PASSWORD
+            value: password
+          - name: MYSQL_DATABASE
+            value: ridpharm

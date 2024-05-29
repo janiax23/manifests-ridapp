@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-service
+  namespace: ns-ridpharm-webapp
+  labels:
+    app: app-ridpharm
+    environment: production
+    tier: database
+    release: stable
+spec:
+  selector:
+    app: app-ridpharm
+    tier: database
+  ports:
+  - protocol: TCP
+    port: 3306
+    targetPort: 3306
+  clusterIP: None

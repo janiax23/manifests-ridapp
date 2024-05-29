@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+  namespace: ns-ridpharm-webapp
+  labels:
+    app: app-ridpharm
+    environment: production
+    tier: database
+    release: stable
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-ridpharm
+      tier: database
+  template:
+    metadata:
+      labels:
+        app: app-ridpharm
+        environment: production
+        tier: database
+        release: stable
+    spec:
+      containers:
+      - name: db
+        image: janrik/db:v1
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: rootpassword
+        - name: MYSQL_DATABASE
+          value: ridpharm
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: db-data
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: db-data
+        persistentVolumeClaim:
+          claimName: db-pvc

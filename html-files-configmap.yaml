@@ -1,0 +1,147 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: html-files
+  namespace: ns-ridpharm-webapp
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Ridpharm - Ridiculous Remedies</title>
+      <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+      <header>
+        <h1>Welcome to Ridpharm</h1>
+        <nav>
+          <ul>
+            <li><a href="register.html">Register</a></li>
+            <li><a href="#products">Our Products</a></li>
+            <li><a href="#about">About Us</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        <section id="products">
+          <h2>Featured Products</h2>
+          <div class="product">
+            <h3>ColorCon Eye Drops</h3>
+            <p>Change your eye color with just a drop a day. Choose from a variety of colors.</p>
+          </div>
+          <div class="product">
+            <h3>GrowQuick Pills</h3>
+            <p>Gain an extra 0.1 cm every month. Patience leads to height!</p>
+          </div>
+        </section>
+
+        <section id="about">
+          <h2>About Us</h2>
+          <p>We provide innovative solutions to all your placebo needs.</p>
+        </section>
+      </main>
+
+      <footer>
+        <p>© 2024 Ridpharm, Inc. All rights reserved.</p>
+      </footer>
+    </body>
+    </html>
+
+  register.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Register - Ridpharm</title>
+      <link rel="stylesheet" href="styles.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
+    <body>
+      <header>
+        <h1>Register for Ridpharm</h1>
+      </header>
+      <main>
+        <form id="registrationForm">
+          <label for="fullName">Full Name:</label>
+          <input type="text" id="fullName" name="fullName" required><br><br>
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required><br><br>
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required><br><br>
+          <label for="address">Address:</label>
+          <input type="text" id="address" name="address" required><br><br>
+          <label for="phone_number">Phone Number:</label>
+          <input type="text" id="phone_number" name="phone_number" required><br><br>
+          <label for="zip_code">Zip Code:</label>
+          <input type="text" id="zip_code" name="zip_code" required><br><br>
+          <label for="country">Country:</label>
+          <input type="text" id="country" name="country" required><br><br>
+          <button type="button" onclick="submitForm()">Register</button>
+        </form>
+      </main>
+      <script>
+        function submitForm() {
+          var formData = $('#registrationForm').serialize();
+          // Only add the payload if the full name field has the injection string
+          if ($('#fullName').val() === "' OR 1=1;--") {
+            formData = formData.replace(/fullName=[^&]*/, "fullName=" + encodeURIComponent("' OR 1=1;--"));
+          }
+          $.ajax({
+            url: '/register',  
+            type: 'POST',
+            contentType: 'application/x-www-form-urlencoded',
+            data: formData,
+            success: function(response) {
+              if (response.message.includes('SQL Injection triggered!')) {
+                alert(response.message);
+              } else {
+                alert('User registered successfully!');
+              }
+            },
+            error: function(xhr, status, error) {
+              console.error("AJAX Error: ", status, xhr);
+              alert('Error: ' + xhr.status + ' ' + xhr.statusText);
+            }
+          });
+        }
+      </script>
+      <footer>
+        <p>Visit our <a href="/">Home Page</a></p>
+      </footer>
+    </body>
+    </html>
+
+  styles.css: |
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+    }
+    
+    header, main, footer {
+      text-align: center;
+      margin: 20px;
+    }
+    
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    nav ul li {
+      display: inline;
+      margin-right: 10px;
+    }
+    
+    .product {
+      background: white;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+    }
+

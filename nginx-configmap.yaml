@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: ns-ridpharm-webapp
+data:
+  default.conf: |
+    server {
+      listen       80;
+      server_name  10.0.3.2;  # Internal worker node IP
+      error_log  /var/log/nginx/error.log debug;
+      access_log  /var/log/nginx/access.log;
+
+      location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+        try_files $uri $uri/ =404;  # Important: Added try_files here
+      }
+
+      location = /register.html { # Added this block
+        root /usr/share/nginx/html;
+        try_files $uri $uri/ =404;
+      }
+
+      location /register {
+        proxy_pass http://backend-service:3000/register;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      }
+
+      location /submit-registration { # Added this block
+        proxy_pass http://backend-service:3000/submit-registration;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      }
+    }
