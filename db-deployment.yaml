@@ -21,6 +21,8 @@ spec:
         environment: production
         tier: database
         release: stable
+      annotations:
+        paloaltonetworks.com/firewall: pan-fw
     spec:
       containers:
       - name: db
@@ -43,3 +45,7 @@ spec:
       - name: db-data
         persistentVolumeClaim:
           claimName: db-pvc
+      - name: pan-cni-ready
+        hostPath:
+          path: /var/log/pan-appinfo/pan-cni-ready
+          type: Directory

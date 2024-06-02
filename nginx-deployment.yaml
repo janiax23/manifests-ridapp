@@ -21,6 +21,8 @@ spec:
         environment: production
         tier: frontend
         release: stable
+      annotations:
+        paloaltonetworks.com/firewall: pan-fw
     spec:
       containers:
       - name: nginx
@@ -40,3 +42,7 @@ spec:
       - name: html-files
         configMap:
           name: html-files
+      - name: pan-cni-ready
+        hostPath:
+          path: /var/log/pan-appinfo/pan-cni-ready
+          type: Directory

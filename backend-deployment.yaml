@@ -21,6 +21,8 @@ spec:
         environment: production
         tier: backend
         release: stable
+      annotations:
+        paloaltonetworks.com/firewall: pan-fw
     spec:
       dnsPolicy: ClusterFirst
       containers:
@@ -38,3 +40,8 @@ spec:
             value: password
           - name: MYSQL_DATABASE
             value: ridpharm
+      volumes:
+      - name: pan-cni-ready
+        hostPath:
+          path: /var/log/pan-appinfo/pan-cni-ready
+          type: Directory
