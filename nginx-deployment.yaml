@@ -23,7 +23,9 @@ spec:
         release: stable
       annotations:
         paloaltonetworks.com/firewall: pan-fw
+        k8s.v1.cni.cncf.io/networks: pan-cni
     spec:
+      dnsPolicy: ClusterFirst
       containers:
       - name: nginx
         image: janrik/nginx:v1
@@ -42,7 +44,3 @@ spec:
       - name: html-files
         configMap:
           name: html-files
-      - name: pan-cni-ready
-        hostPath:
-          path: /var/log/pan-appinfo/pan-cni-ready
-          type: Directory

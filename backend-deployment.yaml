@@ -23,6 +23,7 @@ spec:
         release: stable
       annotations:
         paloaltonetworks.com/firewall: pan-fw
+        k8s.v1.cni.cncf.io/networks: pan-cni
     spec:
       dnsPolicy: ClusterFirst
       containers:
