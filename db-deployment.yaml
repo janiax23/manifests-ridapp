@@ -1,48 +1,45 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment
+  name: db-deployment
   namespace: ns-ridpharm-webapp
   labels:
     app: app-ridpharm
     environment: production
-    tier: backend
+    tier: database
     release: stable
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: app-ridpharm
-      tier: backend
+      tier: database
   template:
     metadata:
       labels:
         app: app-ridpharm
         environment: production
-        tier: backend
+        tier: database
         release: stable
-      annotations:
-        paloaltonetworks.com/firewall: pan-fw
-        k8s.v1.cni.cncf.io/networks: pan-cni
     spec:
-      dnsPolicy: ClusterFirst
       containers:
-      - name: backend
-        image: janrik/backend:v1
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 3000
+      - name: db
+        image: janrik/db:v1
         env:
-          - name: MYSQL_HOST
-            value: db-service
-          - name: MYSQL_USER
-            value: user
-          - name: MYSQL_PASSWORD
-            value: password
-          - name: MYSQL_DATABASE
-            value: ridpharm
+        - name: MYSQL_ROOT_PASSWORD
+          value: rootpassword
+        - name: MYSQL_DATABASE
+          value: ridpharm
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: db-data
+          mountPath: /var/lib/mysql
       volumes:
-      - name: pan-cni-ready
-        hostPath:
-          path: /var/log/pan-appinfo/pan-cni-ready
-          type: Directory
+      - name: db-data
+        persistentVolumeClaim:
+          claimName: db-pvc
