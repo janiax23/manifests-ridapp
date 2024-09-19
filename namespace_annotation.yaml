@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ns-ridpharm-webapp
+  annotations:
+    paloaltonetworks.com/firewall: pan-fw
+    k8s.v1.cni.cncf.io/networks: pan-cni
