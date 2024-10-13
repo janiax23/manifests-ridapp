@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vulnerable-pod
+  labels:
+    app: vulnerable-app
+spec:
+  containers:
+    - name: vulnerable-container
+      image: vulnerable-app:latest   # Using 'latest' tag, and vulnerable image
+      ports:
+        - containerPort: 80
+      securityContext:
+        privileged: true              # Running a privileged container (high security risk)
+        runAsUser: 0                  # Running as root user
+        allowPrivilegeEscalation: true  # Allows privilege escalation
+        readOnlyRootFilesystem: false   # Root filesystem is writable
+      env:
+        - name: SECRET_KEY
+          value: "mysecretkey"        # Sensitive data hardcoded in environment variable
+      resources:
+        requests:
+          memory: "64Mi"              # Memory request is too low for a production workload
+          cpu: "250m"
+        limits:
+          memory: "128Mi"             # Memory limit is too low for a production workload
+          cpu: "500m"
+      volumeMounts:
+        - name: sensitive-data
+          mountPath: /etc/passwords
+          readOnly: false             # Sensitive data should be mounted as read-only
+      command: ["/bin/sh", "-c"]       # Insecure package configuration
+      args:
+        - |
+          apt-get update && apt-get install -y \
+          apache2=2.4.7-1ubuntu4 \
+          openssl=1.0.1f-1ubuntu2.27 \
+          && echo "Vulnerable Apache and OpenSSL installed." \
+          && apache2ctl -D FOREGROUND
+  volumes:
+    - name: sensitive-data
+      hostPath:
+        path: /etc/passwords           # Using hostPath, which exposes the host's filesystem (dangerous practice)
+  hostNetwork: true                    # Sharing the host's network namespace
+  hostPID: true                        # Sharing the host's process namespace (high risk)
+  dnsPolicy: ClusterFirstWithHostNet    # Uses the host’s network settings for DNS, which can be a security issue
+  restartPolicy: Always
