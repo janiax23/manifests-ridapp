@@ -1,0 +1,25 @@
+name: Prisma Cloud CI/CD Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  prisma-cloud-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Run Prisma Cloud Scan
+        id: prisma-cloud
+        uses: bridgecrewio/checkov-action@master
+        env:
+          PRISMA_API_URL: https://api.eu.prismacloud.io # Use the correct URL for your region
+        with:
+          api-key: ${{ secrets.BC_API_KEY }}
