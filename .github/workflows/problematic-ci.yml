@@ -1,0 +1,21 @@
+name: Problematic CI Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  insecure-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@latest # Unpinned version (vulnerable to updates)
+
+      - name: Install dependencies
+        run: |
+          curl -sSL https://some-unverified-url.com/install.sh | bash # Arbitrary code execution
+          npm install
+
+      - name: Run untrusted script
+        run: ./script-from-unverified-source.sh # No validation of script integrity
