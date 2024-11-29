@@ -1,0 +1,20 @@
+name: Workflow Without Artifact Verification
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  no-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download unverified artifact
+        run: |
+          curl -L -o artifact.zip https://untrusted-source.com/artifact.zip
+          unzip artifact.zip -d ./output/
+
+      - name: Run unverified code
+        run: |
+          chmod +x ./output/some-binary
+          ./output/some-binary
