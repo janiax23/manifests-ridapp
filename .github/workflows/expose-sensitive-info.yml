@@ -1,0 +1,16 @@
+name: Sensitive Info Logging Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  expose-logs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print sensitive information
+        env:
+          SECRET_API_KEY: supersecret123
+        run: |
+          echo "The secret key is $SECRET_API_KEY" # Leaks sensitive data in logs
