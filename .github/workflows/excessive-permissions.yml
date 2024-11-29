@@ -1,0 +1,17 @@
+name: Workflow with Excessive Permissions
+
+on:
+  workflow_dispatch:
+
+jobs:
+  excessive-permissions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Unnecessarily high permissions
+      actions: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy application
+        run: ./deploy.sh
